@@ -32,7 +32,7 @@ export const useDynamicForm = () => {
 
     const formsQuery = query(
       collection(db, "forms"),
-      where("formURL", "==", "http://localhost:3000/home"),
+      where("formURL", "==", currentURL),
       limit(20)
     );
 
@@ -43,7 +43,8 @@ export const useDynamicForm = () => {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
         const formDate = data.formDate?.toDate();
-        console.log(data, "data");
+        console.log("Form date:", formDate);
+        console.log("Current time:", currentTime);
         if (formDate && isTimeMatch(currentTime, formDate)) {
           fetchedForms.push({
             id: doc.id,
@@ -56,6 +57,7 @@ export const useDynamicForm = () => {
         }
       });
 
+      console.log("Fetched forms:", fetchedForms);
       setForms(fetchedForms);
     } catch (error) {
       console.error("Error fetching forms: ", error);
@@ -64,11 +66,11 @@ export const useDynamicForm = () => {
 
   const isTimeMatch = (currentTime: Date, formTime: Date): boolean => {
     return (
-      currentTime.getFullYear() === formTime.getFullYear() &&
-      currentTime.getMonth() === formTime.getMonth() &&
-      currentTime.getDate() === formTime.getDate() &&
-      currentTime.getHours() === formTime.getHours() &&
-      currentTime.getMinutes() === formTime.getMinutes()
+      currentTime.getUTCFullYear() === formTime.getUTCFullYear() &&
+      currentTime.getUTCMonth() === formTime.getUTCMonth() &&
+      currentTime.getUTCDate() === formTime.getUTCDate() &&
+      currentTime.getUTCHours() === formTime.getUTCHours() &&
+      currentTime.getUTCMinutes() === formTime.getUTCMinutes()
     );
   };
 

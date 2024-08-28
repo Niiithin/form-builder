@@ -81,7 +81,7 @@ const UserFeedback = () => {
       >
         <Box>
           <Typography variant="h2" sx={styles.views}>
-            {feedbacks.length}
+            {feedbackViewed}
           </Typography>
           <Typography sx={styles.viewsTitle} variant="subtitle2">
             VIEWS

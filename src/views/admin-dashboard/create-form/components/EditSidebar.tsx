@@ -67,7 +67,7 @@ const EditFieldSidebar: React.FC<EditFieldSidebarProps> = ({
         onClick={onCancel}
         sx={styles.backButton}
       >
-        Back to adding fields
+        <Typography variant="h4">Back to adding fields</Typography>
       </Button>
       <Typography variant="h6" sx={styles.title}>
         Edit {field.type}
@@ -97,37 +97,37 @@ const EditFieldSidebar: React.FC<EditFieldSidebarProps> = ({
           margin="normal"
         />
       )}
-
-      {(field.type === "Radio Button" || field.type === "Categories") && (
-        <>
-          <Typography variant="subtitle1" sx={{ mt: 2 }}>
-            Options
-          </Typography>
-          {options.map((option, index) => (
-            <Box
-              key={index}
-              sx={{ display: "flex", alignItems: "center", mb: 1 }}
-            >
-              <TextField
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                fullWidth
-                margin="normal"
-              />
-              <IconButton
-                onClick={() => handleRemoveOption(index)}
-                sx={styles.deleteIcon}
+      <Box>
+        {(field.type === "Radio Button" || field.type === "Categories") && (
+          <>
+            <Typography variant="subtitle1" sx={{ mt: 2 }}>
+              Options
+            </Typography>
+            {options.map((option, index) => (
+              <Box
+                key={index}
+                sx={{ display: "flex", alignItems: "center", mb: 1 }}
               >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          ))}
-          <Button onClick={handleAddOption} sx={styles.addOptionButton}>
-            Add Option
-          </Button>
-        </>
-      )}
-
+                <TextField
+                  value={option}
+                  onChange={(e) => handleOptionChange(index, e.target.value)}
+                  fullWidth
+                  margin="normal"
+                />
+                <IconButton
+                  onClick={() => handleRemoveOption(index)}
+                  sx={styles.deleteIcon}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Box>
+            ))}
+            <Button onClick={handleAddOption} sx={styles.addOptionButton}>
+              Add Option
+            </Button>
+          </>
+        )}
+      </Box>
       <Button
         variant="contained"
         onClick={handleUpdate}
@@ -147,8 +147,10 @@ const styles = {
     padding: "20px",
     borderLeft: "1px solid #ccc",
   },
+
   backButton: {
     marginBottom: "20px",
+    color: "black",
   },
   title: {
     marginBottom: "20px",

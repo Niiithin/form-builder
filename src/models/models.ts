@@ -14,7 +14,7 @@ export interface Feedback {
   url: string;
   title: string;
   viewCount: number;
-  date: Date;
+  date: string;
   time: string;
 }
 export interface SidebarConfigItem {

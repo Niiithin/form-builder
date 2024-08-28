@@ -36,7 +36,7 @@ export default {
     backgroundColor: theme.palette.common.white,
     paddingX: theme.spacing(2),
     width: "500px",
-    paddingY: theme.spacing(1),
+    // paddingY: theme.spacing(1),
     borderRadius: "0 0 8px 8px",
   }),
   formBox: (theme: any) => ({
@@ -44,6 +44,7 @@ export default {
     borderRadius: 1,
     marginBottom: "20px",
     padding: 1,
+    marginTop: "20px",
     boxShadow: "0px 3px 6px rgba(0, 0, 0, 0.1)",
   }),
   buttonContainer: {
@@ -77,8 +78,14 @@ export default {
   emptyFormSpace: {
     padding: "20px",
     textAlign: "center",
-    border: "2px dashed #ccc",
-    borderRadius: "4px",
+    borderRadius: "0 0 8px 8px",
     width: "500px",
+    height: "500px",
+    backgroundColor: "white",
+    elevation: 3,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    boxShadow: "-2px 0 20px rgba(0,0,0,0.1)",
   },
 };

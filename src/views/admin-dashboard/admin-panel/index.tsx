@@ -24,6 +24,8 @@ import { db } from "config/firebase";
 import { QueryDocumentSnapshot } from "firebase/firestore";
 import FormDetailsBox from "components/FormDetailsBox";
 import { setFeedbackId } from "store/feedbackSlice";
+import ModalDialog from "components/Dialog/ModalDialog";
+import Header from "../create-form/components/Header";
 
 // Interface for form field
 interface FormField {
@@ -48,6 +50,7 @@ interface Form {
   date: any;
   description: string;
   viewCount: number;
+  createdDate: string;
   submissionCount: number;
   form: FormData;
   url: string;
@@ -59,7 +62,7 @@ function AdminPanel() {
   const [allForms, setAllForms] = useState<Form[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [formName, setFormName] = useState<string>("");
-  console.log(allForms, "forms");
+
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -67,7 +70,6 @@ function AdminPanel() {
     dispatch(initializeForm());
     dispatch(setFormTitle(formName));
     navigate("/create-form");
-
     handleClose();
   };
 
@@ -78,11 +80,11 @@ function AdminPanel() {
       const forms: Form[] = [];
       querySnapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
         const data = doc.data();
-        console.log(data, "data");
         forms.push({
           id: doc.id,
           title: data.formTitle,
           url: data.formURL,
+          createdDate: data.createdDate,
           date: data.formDate,
           description: data.description,
           viewCount: data.viewCount,
@@ -96,8 +98,6 @@ function AdminPanel() {
     }
   };
 
-  console.log(allForms, "forms");
-
   useEffect(() => {
     fetchForms();
     dispatch(setFeedbackId(""));
@@ -106,13 +106,12 @@ function AdminPanel() {
   const handleFormDeleted = () => {
     fetchForms();
   };
+
   return (
     <>
       <Box sx={styles.container}>
-        <Typography variant="h4" sx={styles.title}>
-          Admin Panel
-        </Typography>
-        <Stack flexDirection={"row"} alignItems={"center"} gap={4}>
+        <Header isCreateForm={false} />
+        <Stack flexDirection={"row"} alignItems={"center"} gap={4} m={4}>
           <Box onClick={handleOpen} sx={styles.formContainer}>
             <Box
               component="img"
@@ -131,30 +130,23 @@ function AdminPanel() {
               submitted={form.submissionCount}
               viewed={form.viewCount}
               date={form.date}
+              createdDate={form.createdDate}
               onFormDeleted={handleFormDeleted}
             />
           ))}
         </Stack>
       </Box>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={styles.modal}>
-          <Typography variant="h6" component="h2">
-            Enter Form Name
-          </Typography>
-          <TextField
-            fullWidth
-            value={formName}
-            onChange={(e) => setFormName(e.target.value)}
-            margin="normal"
-          />
-          <Button onClick={handleSubmit} sx={styles.button}>
-            OK
-          </Button>
-          <Button onClick={handleClose} sx={styles.cancelButton}>
-            Cancel
-          </Button>
-        </Box>
-      </Modal>
+      <ModalDialog
+        open={open}
+        title="Create Feedback Form"
+        inputLabel="Form Name"
+        inputValue={formName}
+        onInputChange={setFormName}
+        agreeText="Create"
+        disagreeText="Cancel"
+        onClose={handleClose}
+        onAgreeAction={handleSubmit}
+      />
     </>
   );
 }
@@ -165,7 +157,6 @@ const styles = {
   container: {
     display: "flex",
     flexDirection: "column",
-    padding: "20px",
   },
   title: {
     marginBottom: "20px",
@@ -188,16 +179,14 @@ const styles = {
     bgcolor: "background.paper",
     boxShadow: 24,
     p: 4,
+    borderRadius: 1,
   },
   button: (theme: any) => ({
-    backgroundColor: theme.palette.primary.main,
     paddingX: theme.spacing(2),
-    color: theme.palette.common.white,
-    marginRight: theme.spacing(2),
+    color: "#189657",
   }),
   cancelButton: (theme: any) => ({
-    backgroundColor: theme.palette.primary.light,
-    color: theme.palette.common.white,
+    color: "#191919",
 
     paddingX: theme.spacing(2),
   }),

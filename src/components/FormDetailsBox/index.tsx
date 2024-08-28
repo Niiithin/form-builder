@@ -13,7 +13,7 @@ import {
   setFeedbackViewCount,
 } from "store/feedbackSlice";
 import ConfirmDialog from "components/Dialog/ConfirmDialog";
-import { convertTimestampToDate, FormDate } from "utility/formatDate";
+import { convertTimestampToDate, FormDate, getDate } from "utility/formatDate";
 import { showToast } from "utility/toast";
 import { toastMessages } from "constants/appConstants";
 import styles from "./index.style";
@@ -24,6 +24,7 @@ interface FormDetailsBoxProps {
   title: string;
   date?: FormDate;
   url: string;
+  createdDate: string;
   submitted?: number;
   viewed?: number;
 }
@@ -35,6 +36,7 @@ const FormDetailsBox: React.FC<FormDetailsBoxProps> = ({
   submitted,
   date,
   viewed,
+  createdDate,
   onFormDeleted,
 }) => {
   const [openDialog, setOpenDialog] = useState(false);
@@ -45,9 +47,8 @@ const FormDetailsBox: React.FC<FormDetailsBoxProps> = ({
     dispatch(setFeedbackId(feedbackId));
     dispatch(setFeedbackTitle(title));
     dispatch(setFeedbackURL(url));
-    if (date) {
-      const jsDate = new Date(date.seconds * 1000 + date.nanoseconds / 1000000);
-      dispatch(setFeedbackDate(jsDate));
+    if (createdDate) {
+      dispatch(setFeedbackDate(createdDate));
     }
     dispatch(setFeedbackViewCount(viewed || 0));
     navigate(`/user-feedback`);
@@ -133,9 +134,9 @@ const FormDetailsBox: React.FC<FormDetailsBoxProps> = ({
             <Typography variant="subtitle2" sx={styles.textHeading}>
               Date Published
             </Typography>
-            {date ? (
+            {createdDate ? (
               <Typography variant="subtitle2" sx={styles.textDesc}>
-                {convertTimestampToDate(date)}
+                {getDate(createdDate)}
               </Typography>
             ) : (
               <Typography variant="subtitle2" sx={styles.textDesc}>

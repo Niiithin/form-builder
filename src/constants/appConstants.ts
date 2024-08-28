@@ -45,6 +45,7 @@ export const toastMessages = {
     limit: "Maximum of 7 fields can be added",
   },
   error: {
+    title: "Please enter a title",
     common: "Unable to process your request. Please try again.",
   },
 };

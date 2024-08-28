@@ -59,3 +59,26 @@ export function extractTime(date: string | Date): string {
 
   return `${hours}:${minutes}`;
 }
+
+export function getDate(isoString: string) {
+  const date = new Date(isoString);
+
+  // Get local date components
+  const day = date.getDate().toString().padStart(2, "0"); // Local day
+  const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Local month (zero-indexed)
+  const year = date.getFullYear(); // Local year
+
+  // Return formatted date (e.g., "28/08/2024")
+  return `${day}/${month}/${year}`;
+}
+
+export function getTime(isoString: string) {
+  const date = new Date(isoString);
+
+  // Get local time components
+  const hours = date.getHours().toString().padStart(2, "0"); // Local hours
+  const minutes = date.getMinutes().toString().padStart(2, "0"); // Local minutes
+
+  // Return formatted time (e.g., "19:30")
+  return `${hours}:${minutes}`;
+}

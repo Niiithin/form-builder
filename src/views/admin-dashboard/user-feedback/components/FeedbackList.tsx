@@ -10,7 +10,7 @@ import {
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import styles from "./index.style";
 import { Answer } from "..";
-import { formatDate } from "utility/formatDate";
+import { formatDate, getDate } from "utility/formatDate";
 
 interface FeedbackProps {
   feedback: {
@@ -36,7 +36,7 @@ function FeedbackAccordian({ feedback, index }: FeedbackProps) {
           sx={styles.accordianHeading}
         >
           <Typography>Feedback {index + 1}</Typography>
-          <Typography>{formatDate(feedback.createdDate)}</Typography>
+          <Typography>{getDate(feedback.createdDate)}</Typography>
         </Stack>
       </AccordionSummary>
       <AccordionDetails sx={{ backgroundColor: "white" }}>
@@ -46,7 +46,11 @@ function FeedbackAccordian({ feedback, index }: FeedbackProps) {
               <Typography variant="subtitle1" fontWeight="bold">
                 {answer.label}
               </Typography>
-              <Typography>{answer.answer.toString()}</Typography>
+              {answer.answer ? (
+                <Typography ml={2}>{answer.answer.toString()}</Typography>
+              ) : (
+                <Typography ml={2}>NA</Typography>
+              )}
             </Box>
           ))}
         </Stack>

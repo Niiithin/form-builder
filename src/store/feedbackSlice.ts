@@ -7,7 +7,7 @@ interface User {
   url: string;
   title: string;
   viewCount: number;
-  date: Date;
+  date: string;
   time: string;
 }
 
@@ -16,7 +16,7 @@ const initialState: Feedback = {
   url: "",
   title: "",
   viewCount: 0,
-  date: new Date(),
+  date: "",
   time: "",
 };
 
@@ -36,7 +36,7 @@ const feedbackSlice = createSlice({
     setFeedbackViewCount: (state, action: PayloadAction<number>) => {
       state.viewCount = action.payload;
     },
-    setFeedbackDate: (state, action: PayloadAction<Date>) => {
+    setFeedbackDate: (state, action: PayloadAction<string>) => {
       state.date = action.payload;
     },
     setFeedbackTime: (state, action: PayloadAction<string>) => {

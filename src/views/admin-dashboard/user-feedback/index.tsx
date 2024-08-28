@@ -11,6 +11,8 @@ import {
   extractDate,
   extractTime,
   formatDate,
+  getDate,
+  getTime,
 } from "utility/formatDate";
 
 // Define interfaces
@@ -68,7 +70,7 @@ const UserFeedback = () => {
           {feedbackTitle}
         </Typography>
         <Typography variant="h5" sx={styles.title}>
-          {extractDate(feedbackDate)}
+          {getDate(feedbackDate)}
         </Typography>
       </Box>
       <Stack
@@ -99,10 +101,10 @@ const UserFeedback = () => {
           Page URL contains {feedbackURL}
         </Typography>
         <Typography sx={styles.views} variant="subtitle1">
-          Date: {extractDate(feedbackDate)}
+          Date: {getDate(feedbackDate)}
         </Typography>
         <Typography sx={styles.views} variant="subtitle1">
-          Time: {extractTime(feedbackDate)}
+          Time: {getTime(feedbackDate)}
         </Typography>
       </Box>
       {feedbacks.map((feedback, id) => (

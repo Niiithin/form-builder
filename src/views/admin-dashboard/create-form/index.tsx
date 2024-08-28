@@ -13,6 +13,7 @@ import {
   Button,
   Stack,
   IconButton,
+  Modal,
 } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
@@ -52,6 +53,7 @@ import { showToast } from "utility/toast";
 import EditFieldSidebar from "./components/EditSidebar";
 import Header from "./components/Header";
 import styles from "./index.style";
+import ModalDialog from "components/Dialog/ModalDialog";
 
 const CreateForm: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -67,18 +69,11 @@ const CreateForm: React.FC = () => {
   const formURL = useSelector((state: RootState) => state.form.formURL);
 
   const [editingField, setEditingField] = useState<FormField | null>(null);
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [tempTitle, setTempTitle] = useState(formTitle);
+  const [open, setOpen] = useState<boolean>(false);
+  const [newFormName, setNewFormName] = useState<string>("");
 
-  useEffect(() => {
-    setTempTitle(formTitle);
-  }, [formTitle]);
-
-  useEffect(() => {
-    if (id) {
-      fetchFormDetails(id);
-    }
-  }, [id]);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const fetchFormDetails = async (formId: string) => {
     try {
@@ -158,8 +153,9 @@ const CreateForm: React.FC = () => {
     if (formDate && formTime) {
       newFormDate = new Date(`${formDate}T${formTime}`);
     } else {
-      newFormDate = null; // Changed from "" to null
+      newFormDate = null;
     }
+    const createdDate = new Date().toISOString();
     const formData = {
       formTitle,
       formURL,
@@ -171,37 +167,38 @@ const CreateForm: React.FC = () => {
       },
       viewCount: 0,
       submissionCount: 0,
+      createdDate: createdDate,
     };
+
+    console.log(formData, "form");
     if (formFields.length >= 1) {
-      try {
-        if (id) {
-          // If id exists, update the existing document
-          const formDocRef = doc(db, "forms", id);
-          await setDoc(formDocRef, formData, { merge: true });
-          showToast(toastMessages.success.form.updated, "success");
-          navigate("/admin-dashboard");
-        } else {
-          // If no id, create a new document
-          const formsCollection = collection(db, "forms");
-          const docRef = await addDoc(formsCollection, formData);
-          showToast(toastMessages.success.form.added, "success");
-          navigate("/admin-dashboard");
+      if (formTitle !== "") {
+        try {
+          if (id) {
+            const formDocRef = doc(db, "forms", id);
+            await setDoc(formDocRef, formData, { merge: true });
+            showToast(toastMessages.success.form.updated, "success");
+            navigate("/admin-dashboard");
+          } else {
+            const formsCollection = collection(db, "forms");
+            const docRef = await addDoc(formsCollection, formData);
+            showToast(toastMessages.success.form.added, "success");
+            navigate("/admin-dashboard");
+          }
+        } catch (error) {
+          showToast(toastMessages.error.common, "error");
         }
-      } catch (error) {
-        showToast(toastMessages.error.common, "error");
+      } else {
+        showToast(toastMessages.error.title, "error");
       }
     } else {
       showToast(toastMessages.warning.limit, "warning");
     }
   };
 
-  const handleTitleEdit = () => {
-    setIsEditingTitle(true);
-  };
-
   const handleTitleSave = () => {
-    dispatch(setFormTitle(tempTitle));
-    setIsEditingTitle(false);
+    dispatch(setFormTitle(newFormName));
+    handleClose();
   };
 
   const customIcons: { [index: number]: CustomIcon } = {
@@ -363,6 +360,11 @@ const CreateForm: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (id) {
+      fetchFormDetails(id);
+    }
+  }, [id]);
   return (
     <Box sx={styles.rootComponent}>
       <Header
@@ -371,45 +373,18 @@ const CreateForm: React.FC = () => {
         formFieldsLength={formFields.length}
         onSave={handleSave}
         onPublish={handlePublish}
-        // disableSave={formFields.length < 1} // Disable when less than 1 field
-        // disablePublish={formFields.length < 1} // Disable when less than 1 field
+        isCreateForm={true}
       />
       <Box sx={styles.contentContainer}>
         <Box sx={styles.formContainer}>
-          {isEditingTitle ? (
-            <Box sx={styles.titleContainer}>
-              <TextField
-                value={tempTitle}
-                onChange={(e) => setTempTitle(e.target.value)}
-                size="small"
-                sx={{
-                  ...styles.formTitle,
-                  input: { color: "white" },
-                  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                    borderColor: "white",
-                  },
-                  "& .MuiInputLabel-root": {
-                    color: "white",
-                  },
-                  "& .MuiInputLabel-root.Mui-focused": {
-                    color: "white",
-                  },
-                }}
-              />
-              <IconButton onClick={handleTitleSave} sx={{ color: "white" }}>
-                <SaveIcon />
-              </IconButton>
-            </Box>
-          ) : (
-            <Box sx={styles.titleContainer}>
-              <Typography variant="h4" sx={styles.formTitle}>
-                {formTitle}
-              </Typography>
-              <IconButton onClick={handleTitleEdit} sx={{ color: "white" }}>
-                <EditIcon />
-              </IconButton>
-            </Box>
-          )}
+          <Box sx={styles.titleContainer}>
+            <Typography variant="h4" sx={styles.formTitle}>
+              {formTitle}
+            </Typography>
+            <IconButton onClick={handleOpen} sx={{ color: "white" }}>
+              <EditIcon />
+            </IconButton>
+          </Box>
           <Box sx={styles.formFields}>
             {formFields.map((field: any) => (
               <Box key={field.id} sx={styles.formBox}>
@@ -426,7 +401,11 @@ const CreateForm: React.FC = () => {
             ))}
           </Box>
           {formFields.length === 0 && (
-            <Box sx={styles.emptyFormSpace}>Add Fields</Box>
+            <Box sx={styles.emptyFormSpace}>
+              <Typography variant="h2" sx={{ color: "#5C5858" }}>
+                Add Fields
+              </Typography>
+            </Box>
           )}
         </Box>
         <Box sx={styles.sidebar}>
@@ -441,6 +420,41 @@ const CreateForm: React.FC = () => {
           )}
         </Box>
       </Box>
+      {/* <Modal open={open} onClose={handleClose}>
+        <Box sx={styles.modal}>
+          <Typography variant="h6">Create Feedback Form</Typography>
+          <TextField
+            fullWidth
+            value={formName}
+            onChange={(e) => setFormName(e.target.value)}
+            margin="normal"
+            variant="standard"
+          />
+          <Stack flexDirection={"row"} justifyContent={"flex-end"}>
+            <Button onClick={handleSubmit} sx={styles.button} variant="text">
+              Create
+            </Button>
+            <Button
+              onClick={handleClose}
+              sx={styles.cancelButton}
+              variant="text"
+            >
+              Cancel
+            </Button>
+          </Stack>
+        </Box>
+      </Modal> */}
+      <ModalDialog
+        open={open}
+        title="Edit"
+        inputLabel="Form Name"
+        inputValue={newFormName}
+        onInputChange={setNewFormName}
+        agreeText="Create"
+        disagreeText="Cancel"
+        onClose={handleClose}
+        onAgreeAction={handleTitleSave}
+      />
     </Box>
   );
 };

@@ -113,9 +113,7 @@ const renderFormField = (field: FormField, formik: any): JSX.Element | null => {
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((number) => (
               <Button
                 key={number}
-                variant={
-                  formik.values[field.id] === number ? "contained" : "outlined"
-                }
+                variant="outlined"
                 sx={{
                   minWidth: "36px",
                   height: "36px",
@@ -123,11 +121,7 @@ const renderFormField = (field: FormField, formik: any): JSX.Element | null => {
                   borderRadius: 0,
                   borderRight: number === 10 ? 1 : 0,
                   borderColor: "black",
-                  color: formik.values[field.id] === number ? "white" : "black",
-                  backgroundColor:
-                    formik.values[field.id] === number
-                      ? "primary.main"
-                      : "transparent",
+                  color: "black",
                 }}
                 onClick={() =>
                   formik.setFieldValue(field.id.toString(), number)
@@ -163,21 +157,10 @@ const renderFormField = (field: FormField, formik: any): JSX.Element | null => {
             name={field.id.toString()}
             value={formik.values[field.id]}
             IconContainerComponent={IconContainer}
-            onChange={(event, newValue) => {
-              formik.setFieldValue(field.id.toString(), newValue);
-            }}
-            sx={{
-              fontSize: "2rem",
-              "& .MuiRating-icon": {
-                color: "grey.300",
-              },
-              "& .MuiRating-iconFilled": {
-                color: "primary.main",
-              },
-              "& .MuiRating-iconHover": {
-                color: "primary.light",
-              },
-            }}
+            onChange={(event, newValue) =>
+              formik.setFieldValue(field.id.toString(), newValue)
+            }
+            sx={{ fontSize: "2rem" }}
           />
           <StyledErrorMessage name={field.id.toString()} />
         </Box>
